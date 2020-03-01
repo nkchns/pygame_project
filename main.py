@@ -1,12 +1,12 @@
-import pygame, random
+import pygame
+import random
 
 pygame.init()
 size = width, height = 700, 500
 screen = pygame.display.set_mode(size)
-window_icon = pygame.image.load('icon.png')
+window_icon = pygame.image.load('icon.png')  # Иконка окна
 pygame.display.set_icon(window_icon)
-pygame.display.set_caption('Snake')
-
+pygame.display.set_caption('Snake')  # Заголовок окна
 
 fps = 20
 clock = pygame.time.Clock()
@@ -108,7 +108,6 @@ while running:
     font = pygame.font.Font(None, 35)
     text = font.render('Счет: ' + str(score), 1, (150, 150, 150))
     screen.blit(text, (10, 10))
-
 
     movement_mechanic(snake_direction)
     defeat_mechanic(snake_pos)

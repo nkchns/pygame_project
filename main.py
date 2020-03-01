@@ -3,7 +3,7 @@ import pygame, random
 pygame.init()
 size = width, height = 700, 500
 screen = pygame.display.set_mode(size)
-window_icon = pygame.image.load('icons/icon.png')
+window_icon = pygame.image.load('icon.png')
 pygame.display.set_icon(window_icon)
 pygame.display.set_caption('Snake')
 

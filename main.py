@@ -42,11 +42,11 @@ def defeat_mechanic(pos):
     # Если змейка выходит за границы X окна
     if pos[0] < 0 or pos[0] >= width:
         defeat = True  # Начисляется поражение
-        print('defeated by width')
+        print('out of borders')
     # Если змейка выходит за границы Y окна
     if pos[1] < 0 or pos[1] >= height:
         defeat = True  # Начисляется поражение
-        print('defeated by height')
+        print('out of borders')
     # Если змейка сталкивается сама с собой
     for segment in snake_list:
         if segment == pos:
@@ -63,7 +63,7 @@ def basic_eating_mechanic(snake_position, food_position):
         # Если змейка касается еды, то счет увеличивается, а новой еде присваиются другие случайные координаты
         score += 1
         food_pos = [random.randrange(10, 700, 10), random.randrange(10, 500, 10)]
-        print(score)
+        print('Счет:', score)
     else:
         # Если змейка не касается еды, то последний элемент удаляется
         snake_list.pop()
@@ -79,7 +79,7 @@ def extra_eating_mechanic(snake_position, extra_food_position):
             snake_list.insert(0, list(snake_pos))
         score += 5
         extra_food = [random.randrange(10, 700, 10), random.randrange(10, 500, 10)]
-        print(score)
+        print('Счет:', score)
     else:
         snake_list.pop()
 
@@ -105,6 +105,10 @@ while running:
                     snake_direction = 'left'
 
     screen.fill(pygame.Color(0, 0, 0))
+    font = pygame.font.Font(None, 35)
+    text = font.render('Счет: ' + str(score), 1, (150, 150, 150))
+    screen.blit(text, (10, 10))
+
 
     movement_mechanic(snake_direction)
     defeat_mechanic(snake_pos)

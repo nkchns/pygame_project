@@ -5,7 +5,7 @@ import os
 pygame.init()
 size = width, height = 720, 512
 screen = pygame.display.set_mode(size)
-window_icon = pygame.image.load('icon.png')  # Иконка окна
+window_icon = pygame.image.load('icons/icon.png')  # Иконка окна
 pygame.display.set_icon(window_icon)
 pygame.display.set_caption('Snake')  # Заголовок окна
 
@@ -42,7 +42,7 @@ def load_image(name, colorkey=None):
 apple_sprite = pygame.sprite.Group()  # Спрайт обычной еды
 
 apple = pygame.sprite.Sprite()
-apple.image = load_image("apple.png")
+apple.image = load_image("icons/apple.png")
 apple.rect = apple.image.get_rect()
 apple_sprite.add(apple)
 apple.rect.x = food_pos[0]
@@ -51,7 +51,7 @@ apple.rect.y = food_pos[1]
 cherry_sprite = pygame.sprite.Group()  # Спрайт редкой еды
 
 cherry = pygame.sprite.Sprite()
-cherry.image = load_image("cherries.png")
+cherry.image = load_image("icons/cherries.png")
 cherry.rect = cherry.image.get_rect()
 cherry_sprite.add(cherry)
 cherry.rect.x = extra_food[0]

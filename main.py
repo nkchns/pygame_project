@@ -1,8 +1,9 @@
 import pygame
 import random
+import os
 
 pygame.init()
-size = width, height = 700, 500
+size = width, height = 720, 512
 screen = pygame.display.set_mode(size)
 window_icon = pygame.image.load('icon.png')  # Иконка окна
 pygame.display.set_icon(window_icon)
@@ -15,25 +16,58 @@ running = True
 defeat = False  # Переменная поражения
 score = 1  # Счет игрока
 
-snake_pos = [30, 10]  # Координаты головы змейки
-snake_list = [[30, 10]]  # Список с координатами всех сегментов змейки
+snake_pos = [32, 16]  # Координаты головы змейки
+snake_list = [[32, 16]]  # Список с координатами всех сегментов змейки
 snake_direction = 'right'  # Направление, куда движется змейка
 
-food_pos = [random.randrange(10, 700, 10), random.randrange(10, 500, 10)]  # Координаты обычной еды, выбираются случайно
-extra_food = [random.randrange(10, 700, 10),
-              random.randrange(10, 500, 10)]  # Координаты редкой еды, выбираются случайно
+food_pos = [random.randrange(16, 720, 16), random.randrange(16, 512, 16)]  # Координаты обычной еды, выбираются случайно
+extra_food = [random.randrange(16, 720, 16),
+              random.randrange(16, 512, 16)]  # Координаты редкой еды, выбираются случайно
+
+
+# Функция для загрузки спрайтов
+def load_image(name, colorkey=None):
+    fullname = os.path.join('', name)
+    image = pygame.image.load(fullname)
+
+    if colorkey is not None:
+        if colorkey == -1:
+            colorkey = image.get_at((0, 0))
+        image.set_colorkey(colorkey)
+    else:
+        image = image.convert_alpha()
+    return image
+
+
+apple_sprite = pygame.sprite.Group()  # Спрайт обычной еды
+
+apple = pygame.sprite.Sprite()
+apple.image = load_image("apple.png")
+apple.rect = apple.image.get_rect()
+apple_sprite.add(apple)
+apple.rect.x = food_pos[0]
+apple.rect.y = food_pos[1]
+
+cherry_sprite = pygame.sprite.Group()  # Спрайт редкой еды
+
+cherry = pygame.sprite.Sprite()
+cherry.image = load_image("cherries.png")
+cherry.rect = cherry.image.get_rect()
+cherry_sprite.add(cherry)
+cherry.rect.x = extra_food[0]
+cherry.rect.y = extra_food[1]
 
 
 # Механика движения змейки
 def movement_mechanic(direction):
     if direction == 'up':
-        snake_pos[1] -= 10
+        snake_pos[1] -= 16
     elif direction == 'down':
-        snake_pos[1] += 10
+        snake_pos[1] += 16
     elif direction == 'right':
-        snake_pos[0] += 10
+        snake_pos[0] += 16
     elif direction == 'left':
-        snake_pos[0] -= 10
+        snake_pos[0] -= 16
 
 
 # Механика поражения
@@ -62,7 +96,9 @@ def basic_eating_mechanic(snake_position, food_position):
     if snake_position == food_position:
         # Если змейка касается еды, то счет увеличивается, а новой еде присваиются другие случайные координаты
         score += 1
-        food_pos = [random.randrange(10, 700, 10), random.randrange(10, 500, 10)]
+        food_pos = [random.randrange(16, 720, 16), random.randrange(16, 512, 16)]
+        apple.rect.x = food_pos[0]
+        apple.rect.y = food_pos[1]
         print('Счет:', score)
     else:
         # Если змейка не касается еды, то последний элемент удаляется
@@ -78,7 +114,9 @@ def extra_eating_mechanic(snake_position, extra_food_position):
         for i in range(4):
             snake_list.insert(0, list(snake_pos))
         score += 5
-        extra_food = [random.randrange(10, 700, 10), random.randrange(10, 500, 10)]
+        extra_food = [random.randrange(16, 720, 16), random.randrange(16, 512, 16)]
+        cherry.rect.x = extra_food[0]
+        cherry.rect.y = extra_food[1]
         print('Счет:', score)
     else:
         snake_list.pop()
@@ -114,30 +152,34 @@ while running:
 
     if score % 10 != 0 or score == 0:
         # Если счет не кратен 10, то еда обычная и змейка белого цвета
-        [pygame.draw.rect(screen, pygame.Color(255, 255, 255), pygame.Rect(i[0], i[1], 10, 10)) for i in
+        [pygame.draw.rect(screen, pygame.Color(255, 255, 255), pygame.Rect(i[0], i[1], 16, 16)) for i in
          snake_list]  # Списочное выражение рисует белую змейку
-        pygame.draw.rect(screen, pygame.Color(255, 255, 255),
-                         pygame.Rect(food_pos[0], food_pos[1], 10, 10))  # Рисуется обычная еда
-
+        pygame.draw.rect(screen, pygame.Color(0, 0, 0),
+                         pygame.Rect(food_pos[0], food_pos[1], 16, 16))  # Рисуется обычная еда
+        apple_sprite.draw(screen)
         basic_eating_mechanic(snake_pos, food_pos)
     elif score % 10 == 0:
         # Если счет кратен 10, то еда редкая (зеленая) и змейка зеленого цвета
-        [pygame.draw.rect(screen, pygame.Color(0, 255, 0), pygame.Rect(i[0], i[1], 10, 10)) for i in
+        [pygame.draw.rect(screen, pygame.Color(0, 255, 0), pygame.Rect(i[0], i[1], 16, 16)) for i in
          snake_list]  # Списочное выражение рисует зеленую змейку
-        pygame.draw.rect(screen, pygame.Color(0, 255, 0),
-                         pygame.Rect(extra_food[0], extra_food[1], 10, 10))  # Рисуется редкая еда
-
+        pygame.draw.rect(screen, pygame.Color(0, 0, 0),
+                         pygame.Rect(extra_food[0], extra_food[1], 16, 16))  # Рисуется редкая еда
+        cherry_sprite.draw(screen)
         extra_eating_mechanic(snake_pos, extra_food)
-
     # Проверяется наличие поражения, если да, то игра сразу начинается заново
     if defeat:
         defeat = False
         score = 1
-        snake_pos = [30, 10]
-        snake_list = [[30, 10]]
+        snake_pos = [32, 16]
+        snake_list = [[32, 16]]
         snake_direction = 'right'
-        food_pos = [random.randrange(10, 700, 10), random.randrange(10, 500, 10)]
-        extra_food = [random.randrange(10, 700, 10), random.randrange(10, 500, 10)]
+        food_pos = [random.randrange(16, 720, 16), random.randrange(16, 512, 16)]
+        extra_food = [random.randrange(16, 720, 16), random.randrange(16, 512, 16)]
+
+        apple.rect.x = food_pos[0]
+        apple.rect.y = food_pos[1]
+        cherry.rect.x = extra_food[0]
+        cherry.rect.y = extra_food[1]
 
     pygame.display.flip()
     clock.tick(fps)

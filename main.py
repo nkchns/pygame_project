@@ -1,6 +1,7 @@
 import pygame
 import random
 import os
+import sys
 
 pygame.init()
 size = width, height = 720, 512
@@ -9,7 +10,7 @@ window_icon = pygame.image.load('icons/icon.png')  # Иконка окна
 pygame.display.set_icon(window_icon)
 pygame.display.set_caption('Snake')  # Заголовок окна
 
-fps = 20
+fps = 25
 clock = pygame.time.Clock()
 running = True
 
@@ -24,6 +25,11 @@ basic_food = [random.randrange(16, 720, 16),
               random.randrange(16, 512, 16)]  # Координаты обычной еды, выбираются случайно
 extra_food = [random.randrange(16, 720, 16),
               random.randrange(16, 512, 16)]  # Координаты редкой еды, выбираются случайно
+
+
+def terminate():
+    pygame.quit()
+    sys.exit()
 
 
 # Функция для загрузки спрайтов
@@ -121,6 +127,38 @@ def extra_eating_mechanic(snake_position, extra_food_position):
         snake_list.pop()
 
 
+# Заставка
+def start_screen():
+    intro_text = ["Snake game", "", "",
+                  "Для началы игры", "нажмите любую кнопку", "",
+                  "Для управления", "используйте стрелочки", "", "Для выхода", "нажмите ESC"]
+
+    fon = pygame.transform.scale(load_image('icons/fon.jpg'), (width, height))
+    screen.blit(fon, (0, 0))
+    font = pygame.font.Font(None, 45)
+    text_coord = 30
+    for line in intro_text:
+        string_rendered = font.render(line, 1, pygame.Color('White'))
+        intro_rect = string_rendered.get_rect()
+        text_coord += 10
+        intro_rect.top = text_coord
+        intro_rect.x = 150
+        text_coord += intro_rect.height
+        screen.blit(string_rendered, intro_rect)
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
+                return
+
+        pygame.display.flip()
+        clock.tick(fps)
+
+
+start_screen()
+
 # Основной цикл
 while running:
     for event in pygame.event.get():
@@ -140,6 +178,8 @@ while running:
             if event.key == pygame.K_LEFT:
                 if snake_direction == 'up' or snake_direction == 'down':
                     snake_direction = 'left'
+            if event.key == pygame.K_ESCAPE:
+                terminate()
 
     screen.fill(pygame.Color(0, 0, 0))
     font = pygame.font.Font(None, 35)
